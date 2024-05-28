@@ -1,7 +1,7 @@
 # Tsracker - An Anime Tracker
 
 ## Features
-* Store in toml format (soon to be changed to a database)
+* Store in json format (soon to be changed to a database)
 * Can import from multiple supported sites (kitsu, mal, etc.)
 * Search MAL via Jikan API
 * Can query your list for any data you might need :)
