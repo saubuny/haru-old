@@ -32,7 +32,7 @@ export async function search(animeName: string) {
 	}
 }
 
-export interface AnimeResult {
+interface AnimeResult {
 	data: {
 		title: string;
 	};

@@ -1,7 +1,7 @@
 import { parseArgs } from "util";
 // import { exit } from "process";
 import { search } from "./search";
-import { importMal, importKitsu } from "./parse";
+import { importMal, importKitsu, importHianime } from "./parse";
 
 const { values } = parseArgs({
 	args: Bun.argv.slice(2),
@@ -25,4 +25,4 @@ const { values } = parseArgs({
 if (values.search) search(values.search);
 if (values.importMal) importMal(values.importMal);
 if (values.importKitsu) await importKitsu(values.importKitsu);
-// if (values.importHianime) importMal(values.importMal);
+if (values.importHianime) importHianime(values.importHianime);

@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { XMLParser } from "fast-xml-parser";
-import { getNameById, type SearchResult } from "./search";
+import { getNameById } from "./search";
 
 enum Completion {
 	Completed,
@@ -117,10 +117,78 @@ async function parseKitsu(file: string): Promise<EntryData[]> {
 	return newEntries;
 }
 
-// Merge this into other function because it's nearly indentical
+// TODO: Merge this into other function because it's nearly indentical
 export async function importKitsu(file: string) {
 	console.log("[Info] Writing to JSON");
 	const entries = await parseKitsu(file);
+	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
+	console.log("[Info] Complete");
+}
+
+interface HiAnimeData {
+	link: string;
+	name: string;
+}
+
+interface HiAnimeFormat {
+	[key: string]: HiAnimeData[];
+}
+
+function newEntriesFromCompletionType(
+	json: HiAnimeFormat,
+	completion: Completion,
+): EntryData[] {
+	const newEntries: EntryData[] = [];
+
+	let compStr = "";
+	switch (completion) {
+		case Completion.OnHold:
+			compStr = "On-Hold";
+			break;
+		case Completion.Completed:
+			compStr = "Completed";
+			break;
+		case Completion.Watching:
+			compStr = "Watching";
+			break;
+		case Completion.PlanToWatch:
+			compStr = "Plan to watch";
+			break;
+		case Completion.Dropped:
+			compStr = "Dropped";
+			break;
+	}
+
+	for (let anime of json[compStr]) {
+		newEntries.push({
+			name: anime.name,
+			mal_id: parseInt(anime.link.split("https://myanimelist.net/anime/")[1]),
+			start_date: "N/A", // :(
+			completion: completion,
+		});
+	}
+	return newEntries;
+}
+
+// This one is a wittle different
+function parseHianime(file: string): EntryData[] {
+	console.log("[Info] Parsing JSON");
+	const contents = readFileSync(file).toString();
+	const json: HiAnimeFormat = JSON.parse(contents);
+	let newEntries: EntryData[] = [];
+
+	// TS Enums r weird
+	const keys = Object.keys(Completion).filter((v) => isNaN(Number(v)));
+	keys.forEach((_, index) => {
+		newEntries = [...newEntries, ...newEntriesFromCompletionType(json, index)];
+	});
+
+	return newEntries;
+}
+
+export function importHianime(file: string) {
+	console.log("[Info] Writing to JSON");
+	const entries = parseHianime(file);
 	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
 	console.log("[Info] Complete");
 }
