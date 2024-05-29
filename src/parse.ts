@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { XMLParser } from "fast-xml-parser";
+import { getNameById, type SearchResult } from "./search";
 
 enum Completion {
 	Completed,
@@ -39,7 +40,6 @@ function parseMal(file: string): EntryData[] {
 	for (let anime of animeList) {
 		let malStatus = Completion.PlanToWatch;
 
-		// Could just use the text directly but i like enums :3
 		switch (anime.my_status) {
 			case "Completed":
 				malStatus = Completion.Completed;
@@ -72,6 +72,55 @@ function parseMal(file: string): EntryData[] {
 export function importMal(file: string) {
 	console.log("[Info] Writing to JSON");
 	const entries = parseMal(file);
+	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
+	console.log("[Info] Complete");
+}
+
+// Kitsu format is identical to MAL but w/ no name, so we have to fetch it manually
+async function parseKitsu(file: string): Promise<EntryData[]> {
+	console.log("[Info] Parsing XML");
+	const contents = readFileSync(file);
+	const json: MalFormat = new XMLParser().parse(contents);
+	const animeList: MalAnime[] = json.myanimelist.anime;
+	const newEntries: EntryData[] = [];
+	for (let anime of animeList) {
+		let malStatus = Completion.PlanToWatch;
+
+		// Tiny tiny discrepancies in the formatting of labels >:(
+		switch (anime.my_status) {
+			case "Completed":
+				malStatus = Completion.Completed;
+				break;
+			case "Plan to Watch":
+				malStatus = Completion.PlanToWatch;
+				break;
+			case "On Hold":
+				malStatus = Completion.OnHold;
+				break;
+			case "Dropped":
+				malStatus = Completion.Dropped;
+				break;
+			case "Watching":
+				malStatus = Completion.Watching;
+				break;
+		}
+
+		// We r really gonna have to make a network request for each title... wow...
+		// Now i have to color all my functions >:(
+		newEntries.push({
+			name: await getNameById(anime.series_animedb_id),
+			mal_id: anime.series_animedb_id,
+			start_date: anime.my_start_date,
+			completion: malStatus,
+		});
+	}
+	return newEntries;
+}
+
+// Merge this into other function because it's nearly indentical
+export async function importKitsu(file: string) {
+	console.log("[Info] Writing to JSON");
+	const entries = await parseKitsu(file);
 	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
 	console.log("[Info] Complete");
 }
