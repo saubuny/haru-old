@@ -1,4 +1,4 @@
-# Tsracker - An Anime Tracker
+# Haru - An Anime Tracker
 
 ## Features
 * Store in json format (soon to be changed to a database)
@@ -9,17 +9,17 @@
 ## Usage/Examples
 Importing data to you list:
 ```bash
-tsracker --import kitsu.xml --kitsu
+haru --import kitsu.xml --kitsu
 ```
 
 Display info about an anime
 ```bash
-tsracker --search Naruto
+haru --search Naruto
 ```
 
 Add an anime via it's ID
 ```bash
-tsracker --add [id]
+haru --add [id]
 ```
 
 ## Why
