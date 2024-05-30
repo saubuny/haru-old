@@ -6,7 +6,6 @@ interface SearchData {
 	title_japanese: string;
 	score: number;
 	episodes: number;
-	year: number;
 	aired: {
 		string: string;
 	};
@@ -25,10 +24,9 @@ export async function search(animeName: string) {
 	for (let anime of json.data) {
 		console.log(`${anime.title} | ${anime.title_japanese}`);
 		console.log(`MAL ID: ${anime.mal_id}`);
-		console.log(`${anime.year ?? anime.aired.string}`);
+		console.log(`Release: ${anime.aired.string}`);
 		console.log(`Episodes: ${anime.episodes}`);
-		console.log(`MAL Score: ${anime.score}`);
-		console.log("");
+		console.log(`MAL Score: ${anime.score}\n`);
 	}
 }
 

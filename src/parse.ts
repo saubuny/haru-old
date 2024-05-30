@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { XMLParser } from "fast-xml-parser";
 import { getNameById } from "./search";
+import { Options } from ".";
 
 enum Completion {
 	Completed,
@@ -68,14 +69,6 @@ function parseMal(file: string): EntryData[] {
 	return newEntries;
 }
 
-// JSON format is temporary, it's just easy to work with
-export function importMal(file: string) {
-	console.log("[Info] Writing to JSON");
-	const entries = parseMal(file);
-	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
-	console.log("[Info] Complete");
-}
-
 // Kitsu format is identical to MAL but w/ no name, so we have to fetch it manually
 async function parseKitsu(file: string): Promise<EntryData[]> {
 	console.log("[Info] Parsing XML");
@@ -115,14 +108,6 @@ async function parseKitsu(file: string): Promise<EntryData[]> {
 		});
 	}
 	return newEntries;
-}
-
-// TODO: Merge this into other function because it's nearly indentical
-export async function importKitsu(file: string) {
-	console.log("[Info] Writing to JSON");
-	const entries = await parseKitsu(file);
-	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
-	console.log("[Info] Complete");
 }
 
 interface HiAnimeData {
@@ -186,9 +171,12 @@ function parseHianime(file: string): EntryData[] {
 	return newEntries;
 }
 
-export function importHianime(file: string) {
+export async function importFile(file: string, cmd: Options) {
 	console.log("[Info] Writing to JSON");
-	const entries = parseHianime(file);
+	let entries: EntryData[] = [];
+	if (cmd == Options.ImportMal) entries = parseMal(file);
+	else if (cmd == Options.ImportKitsu) entries = await parseKitsu(file);
+	else if (cmd == Options.ImportHianime) entries = parseHianime(file);
 	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
 	console.log("[Info] Complete");
 }
