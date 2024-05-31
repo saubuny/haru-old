@@ -1,23 +1,27 @@
 # Haru - An Anime Tracker
 
+Note: Not yet fully functional!
+
 ## Features
+
 * Store in json format (soon to be changed to a database)
 * Can import from multiple supported sites (kitsu, mal, etc.)
 * Search MAL via Jikan API
-* Can query your list for any data you might need :)
+* Can query/modify your list :)
 
 ## Usage/Examples
-Importing data to you list:
+
+Importing data to your list:
 ```bash
-haru --import kitsu.xml --kitsu
+haru --importMal mal.xml
 ```
 
-Display info about an anime
+Display info about an anime:
 ```bash
 haru --search Naruto
 ```
 
-Add an anime via it's ID
+Add an anime via it's ID:
 ```bash
 haru --add [id]
 ```

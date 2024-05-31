@@ -1,36 +1,8 @@
 import { readFileSync, writeFileSync } from "fs";
 import { XMLParser } from "fast-xml-parser";
 import { getNameById } from "./search";
-import { Options } from ".";
-
-enum Completion {
-	Completed,
-	Watching,
-	Dropped,
-	PlanToWatch,
-	OnHold,
-}
-
-// All other data fetched by API requests by id
-interface EntryData {
-	name: string;
-	mal_id: number;
-	completion: Completion;
-	start_date: string;
-}
-
-interface MalAnime {
-	series_animedb_id: number;
-	series_title: string;
-	my_start_date: string;
-	my_status: string;
-}
-
-interface MalFormat {
-	myanimelist: {
-		anime: MalAnime[];
-	};
-}
+import type { HiAnimeFormat, EntryData, MalFormat, MalAnime } from "./types";
+import { Completion, Options } from "./types";
 
 function parseMal(file: string): EntryData[] {
 	console.log("[Info] Parsing XML");
@@ -103,20 +75,11 @@ async function parseKitsu(file: string): Promise<EntryData[]> {
 		newEntries.push({
 			name: await getNameById(anime.series_animedb_id),
 			mal_id: anime.series_animedb_id,
-			start_date: anime.my_start_date,
+			start_date: anime.my_start_date ?? "0000-00-00",
 			completion: malStatus,
 		});
 	}
 	return newEntries;
-}
-
-interface HiAnimeData {
-	link: string;
-	name: string;
-}
-
-interface HiAnimeFormat {
-	[key: string]: HiAnimeData[];
 }
 
 function newEntriesFromCompletionType(
@@ -148,7 +111,7 @@ function newEntriesFromCompletionType(
 		newEntries.push({
 			name: anime.name,
 			mal_id: parseInt(anime.link.split("https://myanimelist.net/anime/")[1]),
-			start_date: "N/A", // :(
+			start_date: "0000-00-00", // :(
 			completion: completion,
 		});
 	}

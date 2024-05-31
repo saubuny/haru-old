@@ -1,19 +1,5 @@
 import { sleep } from "bun";
-
-interface SearchData {
-	mal_id: number;
-	title: string;
-	title_japanese: string;
-	score: number;
-	episodes: number;
-	aired: {
-		string: string;
-	};
-}
-
-interface SearchResult {
-	data: SearchData[];
-}
+import type { SearchResult, AnimeResult } from "./types";
 
 export async function search(animeName: string) {
 	console.log("[Info] Searching...");
@@ -28,12 +14,6 @@ export async function search(animeName: string) {
 		console.log(`Episodes: ${anime.episodes}`);
 		console.log(`MAL Score: ${anime.score}\n`);
 	}
-}
-
-interface AnimeResult {
-	data: {
-		title: string;
-	};
 }
 
 export async function getNameById(animeId: number): Promise<string> {

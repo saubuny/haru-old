@@ -1,17 +1,19 @@
 import { search } from "./search";
 import { importFile } from "./parse";
 import { exit } from "process";
+import { addNewAnime } from "./list";
+import { Options } from "./types";
 
-export enum Options {
-	Search,
-	ImportMal,
-	ImportKitsu,
-	ImportHianime,
-}
+// === TODO ===
+// * Add to own list by ID
+// * Modify data on list
+// * Merge imported data into lost
+// * Save to remote database
 
 // Index errors apparently don't exist ??
 const cmdStr = Bun.argv[2];
-const arg = Bun.argv[3];
+const arg1 = Bun.argv[3];
+// const arg2 = Bun.argv[4];
 let cmd: Options;
 
 switch (cmdStr) {
@@ -20,6 +22,9 @@ switch (cmdStr) {
 		console.log("Usage:");
 		console.log("\t--help -> The message you're seeing right now");
 		console.log("\t--search [title] -> Search MAL by title");
+		console.log("\t--add [id] -> Add ID to list");
+		console.log("\t--modifyCompletion [id] [completion] -> Add ID to list");
+		console.log("\t--modifyStart [id] [date] -> Add ID to list");
 		console.log("\t--importMal [file] -> Import your MAL data in xml format");
 		console.log(
 			"\t--importKitsu [file] -> Import your Kitsu data in xml format",
@@ -40,6 +45,15 @@ switch (cmdStr) {
 	case "--importHianime":
 		cmd = Options.ImportHianime;
 		break;
+	case "--add":
+		cmd = Options.Add;
+		break;
+	case "--modifyCompletion":
+		cmd = Options.ModifyCompletion;
+		break;
+	case "--modifyStart":
+		cmd = Options.ModifyStart;
+		break;
 	default:
 		console.error(`[Error] Invalid command given: ${cmdStr}`);
 		console.error("Try running the --help command");
@@ -48,13 +62,20 @@ switch (cmdStr) {
 
 switch (cmd) {
 	case Options.Search:
-		search(arg);
+		await search(arg1);
+		break;
+	case Options.Add:
+		await addNewAnime(parseInt(arg1));
+		break;
+	case Options.ModifyCompletion:
+		break;
+	case Options.ModifyStart:
 		break;
 	default:
-		if (!arg) {
+		if (!arg1) {
 			console.error("[Error] No file given");
 			exit(1);
 		}
-		await importFile(arg, cmd);
+		await importFile(arg1, cmd);
 		break;
 }
