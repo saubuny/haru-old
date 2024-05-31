@@ -1,17 +1,29 @@
 import { getNameById } from "./search";
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync } from "fs";
 import { type EntryData, Completion } from "./types";
 
 export async function addNewAnime(id: number, path: string) {
 	const name = await getNameById(id);
-	const newEntry: EntryData = {
-		name,
-		mal_id: id,
-		completion: Completion.PlanToWatch,
-		start_date: new Date().toISOString().split("T")[0],
-	};
+	const newEntry: EntryData[] = [
+		{
+			name,
+			mal_id: id,
+			completion: Completion.PlanToWatch,
+			start_date: new Date().toISOString().split("T")[0],
+		},
+	];
 
-	writeFileSync(path, JSON.stringify(newEntry));
+	writeFileSync(path, JSON.stringify(merge(getList(path), newEntry), null, 2));
+}
+
+export function getList(path: string): EntryData[] {
+	try {
+		const list = readFileSync(path).toString();
+		return JSON.parse(list);
+	} catch {
+		writeFileSync(path, "[]");
+		return getList(path);
+	}
 }
 
 function compareDates(anime1: EntryData, anime2: EntryData): boolean {
@@ -27,7 +39,7 @@ export function merge(
 	oldEntries: EntryData[],
 	newEntries: EntryData[],
 ): EntryData[] {
-	let combinedEntries: EntryData[] = [...oldEntries, ...newEntries];
+	let combinedEntries: EntryData[] = oldEntries.concat(newEntries);
 
 	for (let i = 0; i < combinedEntries.length; i++) {
 		for (let j = 0; j < combinedEntries.length; j++) {

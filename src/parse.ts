@@ -3,6 +3,7 @@ import { XMLParser } from "fast-xml-parser";
 import { getNameById } from "./search";
 import type { HiAnimeFormat, EntryData, MalFormat, MalAnime } from "./types";
 import { Completion, Options } from "./types";
+import { getList, merge } from "./list";
 
 function parseMal(file: string): EntryData[] {
 	console.log("[Info] Parsing XML");
@@ -34,7 +35,7 @@ function parseMal(file: string): EntryData[] {
 		newEntries.push({
 			name: anime.series_title,
 			mal_id: anime.series_animedb_id,
-			start_date: anime.my_start_date,
+			start_date: anime.my_start_date ?? "0000-00-00",
 			completion: malStatus,
 		});
 	}
@@ -70,8 +71,7 @@ async function parseKitsu(file: string): Promise<EntryData[]> {
 				break;
 		}
 
-		// We r really gonna have to make a network request for each title... wow...
-		// Now i have to color all my functions >:(
+		// HTTP req for each title is crazy
 		newEntries.push({
 			name: await getNameById(anime.series_animedb_id),
 			mal_id: anime.series_animedb_id,
@@ -134,12 +134,16 @@ function parseHianime(file: string): EntryData[] {
 	return newEntries;
 }
 
-export async function importFile(file: string, cmd: Options) {
-	console.log("[Info] Writing to JSON");
+export async function importFile(file: string, cmd: Options, path: string) {
+	console.log("[Info] Merging to List");
 	let entries: EntryData[] = [];
+
 	if (cmd == Options.ImportMal) entries = parseMal(file);
-	else if (cmd == Options.ImportKitsu) entries = await parseKitsu(file);
-	else if (cmd == Options.ImportHianime) entries = parseHianime(file);
-	writeFileSync("anime.json", JSON.stringify(entries, null, 2));
+	if (cmd == Options.ImportKitsu) entries = await parseKitsu(file);
+	if (cmd == Options.ImportHianime) entries = parseHianime(file);
+
+	const list = getList(path);
+	const newEntries = merge(list, entries);
+	writeFileSync(path, JSON.stringify(newEntries, null, 2));
 	console.log("[Info] Complete");
 }

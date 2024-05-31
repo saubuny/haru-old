@@ -8,8 +8,8 @@ import { readConfigFile } from "./config";
 // === TODO ===
 // * Add to own list by ID
 // * Modify data on list
-// * Save to remote database
 // * Pretty colored output
+// * Save to remote database
 
 // Index errors apparently don't exist ??
 const cmdStr = Bun.argv[2];
@@ -89,11 +89,13 @@ switch (cmd) {
 		break;
 	case Options.ModifyStart:
 		break;
-	default:
+	case Options.ImportMal:
+	case Options.ImportKitsu:
+	case Options.ImportHianime:
 		if (!arg1) {
 			console.error("[Error] No file given");
 			exit(1);
 		}
-		await importFile(arg1, cmd);
+		await importFile(arg1, cmd, config.list_location);
 		break;
 }
