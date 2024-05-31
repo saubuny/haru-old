@@ -4,10 +4,11 @@ Note: Not yet fully functional!
 
 ## Features
 
-* Store in json format (soon to be changed to a database)
 * Can import from multiple supported sites (kitsu, mal, etc.)
 * Search MAL via Jikan API
 * Can query/modify your list :)
+
+Your list will be generated and stored in JSON format in the configurated location. Your config file lives in `.config/haru/config.json`.
 
 ## Usage/Examples
 

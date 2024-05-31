@@ -2,7 +2,7 @@ import { getNameById } from "./search";
 import { writeFileSync } from "fs";
 import { type EntryData, Completion } from "./types";
 
-export async function addNewAnime(id: number) {
+export async function addNewAnime(id: number, path: string) {
 	const name = await getNameById(id);
 	const newEntry: EntryData = {
 		name,
@@ -11,11 +11,9 @@ export async function addNewAnime(id: number) {
 		start_date: new Date().toISOString().split("T")[0],
 	};
 
-	writeFileSync("list.json", JSON.stringify(newEntry));
+	writeFileSync(path, JSON.stringify(newEntry));
 }
 
-// Overwrite if new entry's date is newer than old entry's
-// If there is no date (date == "0000-00-00"), go by completion
 function compareDates(anime1: EntryData, anime2: EntryData): boolean {
 	if (anime1.start_date === "0000-00-00" || anime2.start_date === "0000-00-00")
 		return anime1.completion < anime2.completion;

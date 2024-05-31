@@ -3,12 +3,13 @@ import { importFile } from "./parse";
 import { exit } from "process";
 import { addNewAnime } from "./list";
 import { Options } from "./types";
+import { readConfigFile } from "./config";
 
 // === TODO ===
 // * Add to own list by ID
 // * Modify data on list
-// * Merge imported data into lost
 // * Save to remote database
+// * Pretty colored output
 
 // Index errors apparently don't exist ??
 const cmdStr = Bun.argv[2];
@@ -16,9 +17,11 @@ const arg1 = Bun.argv[3];
 // const arg2 = Bun.argv[4];
 let cmd: Options;
 
+const config = readConfigFile()!;
+
 switch (cmdStr) {
 	case "--help":
-		console.log("Tsracker: An Anime Tracker");
+		console.log("Haru: An Anime Tracker");
 		console.log("Usage:");
 		console.log("\t--help -> The message you're seeing right now");
 		console.log("\t--search [title] -> Search MAL by title");
@@ -65,7 +68,7 @@ switch (cmd) {
 		await search(arg1);
 		break;
 	case Options.Add:
-		await addNewAnime(parseInt(arg1));
+		await addNewAnime(parseInt(arg1), config.list_location);
 		break;
 	case Options.ModifyCompletion:
 		break;

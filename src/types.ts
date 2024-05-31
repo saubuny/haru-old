@@ -66,3 +66,9 @@ export interface AnimeResult {
 		title: string;
 	};
 }
+
+export interface Config {
+	list_location: string;
+	colors: boolean;
+	database_url?: string;
+}
