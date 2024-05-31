@@ -21,11 +21,13 @@ const config = readConfigFile()!;
 
 switch (cmdStr) {
 	case "--help":
+	case "--h":
 		console.log("Haru: An Anime Tracker");
 		console.log("Usage:");
 		console.log("\t--help -> The message you're seeing right now");
 		console.log("\t--search [title] -> Search MAL by title");
 		console.log("\t--add [id] -> Add ID to list");
+		console.log("\t--remove [id] -> Remove ID from list");
 		console.log("\t--modifyCompletion [id] [completion] -> Add ID to list");
 		console.log("\t--modifyStart [id] [date] -> Add ID to list");
 		console.log("\t--importMal [file] -> Import your MAL data in xml format");
@@ -37,24 +39,35 @@ switch (cmdStr) {
 		);
 		exit(0);
 	case "--search":
+	case "--s":
 		cmd = Options.Search;
 		break;
 	case "--importMal":
+	case "--iMal":
 		cmd = Options.ImportMal;
 		break;
 	case "--importKitsu":
+	case "--iKitsu":
 		cmd = Options.ImportKitsu;
 		break;
 	case "--importHianime":
+	case "--iHianime":
 		cmd = Options.ImportHianime;
 		break;
 	case "--add":
+	case "--a":
 		cmd = Options.Add;
 		break;
+	case "--remove":
+	case "--r":
+		cmd = Options.Remove;
+		break;
 	case "--modifyCompletion":
+	case "--modComp":
 		cmd = Options.ModifyCompletion;
 		break;
 	case "--modifyStart":
+	case "--modStart":
 		cmd = Options.ModifyStart;
 		break;
 	default:
@@ -69,6 +82,8 @@ switch (cmd) {
 		break;
 	case Options.Add:
 		await addNewAnime(parseInt(arg1), config.list_location);
+		break;
+	case Options.Remove:
 		break;
 	case Options.ModifyCompletion:
 		break;

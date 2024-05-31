@@ -1,8 +1,9 @@
 export enum Options {
 	Search,
 	Add,
-	ModifyCompletion, //
-	ModifyStart, //
+	Remove,
+	ModifyCompletion,
+	ModifyStart,
 	ImportMal,
 	ImportKitsu,
 	ImportHianime,
