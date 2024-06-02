@@ -12,6 +12,11 @@ Your list will be generated and stored in JSON format in the configurated locati
 
 ## Usage/Examples
 
+Install with the following command and then move to a location in your path
+```bash
+bun build src/index.ts --compile --outfile=haru
+```
+
 Importing data to your list:
 ```bash
 haru --importMal mal.xml

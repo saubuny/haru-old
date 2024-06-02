@@ -141,6 +141,7 @@ export async function importFile(file: string, cmd: Options, path: string) {
 	if (cmd == Options.ImportMal) entries = parseMal(file);
 	if (cmd == Options.ImportKitsu) entries = await parseKitsu(file);
 	if (cmd == Options.ImportHianime) entries = parseHianime(file);
+	if (cmd == Options.ImportHaru) entries = getList(file);
 
 	const list = getList(path);
 	const newEntries = merge(list, entries);

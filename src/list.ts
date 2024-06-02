@@ -66,11 +66,11 @@ function compareDates(oldAnime: EntryData, newAnime: EntryData): boolean {
 		oldAnime.start_date === "0000-00-00" ||
 		newAnime.start_date === "0000-00-00"
 	)
-		return oldAnime.completion < newAnime.completion;
+		return oldAnime.completion <= newAnime.completion;
 
 	const d1 = new Date(oldAnime.start_date);
 	const d2 = new Date(newAnime.start_date);
-	return d1 > d2;
+	return d1 >= d2;
 }
 
 export function merge(
@@ -125,4 +125,29 @@ export function modifyDate(id: number, date: string, path: string) {
 		console.error("[Error] Invalid date provided");
 		exit(1);
 	}
+}
+
+export function printStats(path: string) {
+	const list = getList(path);
+
+	let total = 0;
+	let stats = {
+		0: 0,
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+	};
+
+	for (let anime of list) {
+		total++;
+		stats[anime.completion]++;
+	}
+
+	console.log(total + " total");
+	console.log(stats[Completion.Completed] + " completed");
+	console.log(stats[Completion.Watching] + " watching");
+	console.log(stats[Completion.PlanToWatch] + " planned");
+	console.log(stats[Completion.Dropped] + " dropped");
+	console.log(stats[Completion.OnHold] + " on hold");
 }

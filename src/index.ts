@@ -6,6 +6,7 @@ import {
 	getList,
 	modifyCompletion,
 	modifyDate,
+	printStats,
 	removeAnime,
 	searchList,
 } from "./list";
@@ -25,6 +26,7 @@ switch (cmdStr) {
 		console.log("Haru: An Anime Tracker");
 		console.log("Usage:");
 		console.log("\t--help -> The message you're seeing right now");
+		console.log("\t--stats -> Print the stats of your Haru list");
 		console.log("\t--completion -> Get the meanings of completion numbers");
 		console.log("\t--searchMal [title] -> Search MAL by title");
 		console.log("\t--searchList [title] -> Search list by title");
@@ -42,6 +44,7 @@ switch (cmdStr) {
 		console.log(
 			"\t--importHianime [file] -> Import your Hianime data in json format, separated by folders",
 		);
+		console.log("\t--importHaru [file] -> Import your old Haru lists");
 		exit(0);
 	case "--searchMal":
 	case "--sm":
@@ -59,6 +62,10 @@ switch (cmdStr) {
 	case "--iHianime":
 		cmd = Options.ImportHianime;
 		break;
+	case "--importHaru":
+	case "--ih":
+		cmd = Options.ImportHaru;
+		break;
 	case "--add":
 	case "--a":
 		cmd = Options.Add;
@@ -70,6 +77,10 @@ switch (cmdStr) {
 	case "--getList":
 	case "--gl":
 		cmd = Options.GetList;
+		break;
+	case "--stats":
+	case "--st":
+		cmd = Options.Stats;
 		break;
 	case "--searchList":
 	case "--sl":
@@ -153,6 +164,10 @@ switch (cmd) {
 			console.log(`${i}: ${keys[i]}`);
 		}
 		break;
+	case Options.Stats:
+		printStats(config.list_location);
+		break;
+	case Options.ImportHaru:
 	case Options.ImportMal:
 	case Options.ImportKitsu:
 	case Options.ImportHianime:
