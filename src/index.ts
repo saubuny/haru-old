@@ -2,7 +2,7 @@ import { search } from "./search";
 import { importFile } from "./parse";
 import { exit } from "process";
 import { addNewAnime, getList, removeAnime } from "./list";
-import { Options } from "./types";
+import { Options, Completion } from "./types";
 import { readConfigFile } from "./config";
 
 // === TODO ===
@@ -27,7 +27,9 @@ switch (cmdStr) {
 		console.log("\t--search [title] -> Search MAL by title");
 		console.log("\t--add [id] -> Add ID to list");
 		console.log("\t--remove [id] -> Remove ID from list");
-		console.log("\t--getList <completion> -> Fetch list contents");
+		console.log(
+			"\t--getList <completion> -> Fetch list contents, completion is an integer 0-4",
+		);
 		console.log("\t--modifyCompletion [id] [completion] -> Add ID to list");
 		console.log("\t--modifyStart [id] [date] -> Add ID to list");
 		console.log("\t--importMal [file] -> Import your MAL data in xml format");
@@ -91,8 +93,18 @@ switch (cmd) {
 		await removeAnime(parseInt(arg1), config.list_location);
 		break;
 	case Options.GetList:
-		// TODO: filter by completion type
-		console.log(getList(config.list_location));
+		const list = getList(config.list_location);
+		if (!arg1) {
+			console.log(list);
+			break;
+		}
+		const comp = Number(arg1);
+		if (comp < 0 || comp > 4 || isNaN(comp)) {
+			console.error("[Error] Completion number invalid or out of range");
+		} else {
+			const filteredList = list.filter((entry) => entry.completion === comp);
+			console.log(filteredList);
+		}
 		break;
 	case Options.ModifyCompletion:
 		break;
