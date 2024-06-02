@@ -19,7 +19,7 @@ haru --importMal mal.xml
 
 Display info about an anime:
 ```bash
-haru --search Naruto
+haru --searchMal Naruto
 ```
 
 Add an anime via it's ID:
