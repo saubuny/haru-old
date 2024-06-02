@@ -108,3 +108,21 @@ export function modifyCompletion(
 	list[index].completion = completion;
 	writeFileSync(path, JSON.stringify(list, null, 2));
 }
+
+export function modifyDate(id: number, date: string, path: string) {
+	const list = getList(path);
+	const index = list.findIndex((entry) => entry.mal_id === id);
+	if (index === -1) {
+		console.error("[Error] id not found in list");
+		exit(1);
+	}
+
+	try {
+		const newDate = new Date(date);
+		list[index].start_date = newDate.toISOString().split("T")[0];
+		writeFileSync(path, JSON.stringify(list, null, 2));
+	} catch {
+		console.error("[Error] Invalid date provided");
+		exit(1);
+	}
+}

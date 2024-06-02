@@ -5,6 +5,7 @@ import {
 	addNewAnime,
 	getList,
 	modifyCompletion,
+	modifyDate,
 	removeAnime,
 	searchList,
 } from "./list";
@@ -15,7 +16,6 @@ import { readConfigFile } from "./config";
 // * Modify data on list
 // * Pretty-printed colored output
 
-// Index errors apparently don't exist ??
 const cmdStr = Bun.argv[2];
 const arg1 = Bun.argv[3];
 const arg2 = Bun.argv[4];
@@ -144,6 +144,12 @@ switch (cmd) {
 		break;
 	}
 	case Options.ModifyStart:
+		const id = Number(arg1);
+		if (isNaN(id)) {
+			console.error("[Error] Invalid id");
+			exit(1);
+		}
+		modifyDate(id, arg2, config.list_location);
 		break;
 	case Options.Completion:
 		const keys = Object.keys(Completion).filter((v) => isNaN(Number(v)));
