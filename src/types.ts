@@ -1,5 +1,7 @@
 export enum Options {
-	Search,
+	SearchMal,
+	GetList,
+	SearchList,
 	Add,
 	Remove,
 	ModifyCompletion,
@@ -17,7 +19,6 @@ export enum Completion {
 	OnHold,
 }
 
-// This is repeated, move to global declaration file
 export interface EntryData {
 	name: string;
 	mal_id: number;

@@ -1,15 +1,14 @@
 import { search } from "./search";
 import { importFile } from "./parse";
 import { exit } from "process";
-import { addNewAnime } from "./list";
+import { addNewAnime, getList, removeAnime } from "./list";
 import { Options } from "./types";
 import { readConfigFile } from "./config";
 
 // === TODO ===
-// * Add to own list by ID
 // * Modify data on list
-// * Pretty colored output
-// * Save to remote database
+// * Query data on list
+// * Pretty-printed colored output
 
 // Index errors apparently don't exist ??
 const cmdStr = Bun.argv[2];
@@ -28,6 +27,7 @@ switch (cmdStr) {
 		console.log("\t--search [title] -> Search MAL by title");
 		console.log("\t--add [id] -> Add ID to list");
 		console.log("\t--remove [id] -> Remove ID from list");
+		console.log("\t--getList <completion> -> Fetch list contents");
 		console.log("\t--modifyCompletion [id] [completion] -> Add ID to list");
 		console.log("\t--modifyStart [id] [date] -> Add ID to list");
 		console.log("\t--importMal [file] -> Import your MAL data in xml format");
@@ -40,7 +40,7 @@ switch (cmdStr) {
 		exit(0);
 	case "--search":
 	case "--s":
-		cmd = Options.Search;
+		cmd = Options.SearchMal;
 		break;
 	case "--importMal":
 	case "--iMal":
@@ -62,6 +62,10 @@ switch (cmdStr) {
 	case "--r":
 		cmd = Options.Remove;
 		break;
+	case "--getList":
+	case "--gl":
+		cmd = Options.GetList;
+		break;
 	case "--modifyCompletion":
 	case "--modComp":
 		cmd = Options.ModifyCompletion;
@@ -77,13 +81,18 @@ switch (cmdStr) {
 }
 
 switch (cmd) {
-	case Options.Search:
+	case Options.SearchMal:
 		await search(arg1);
 		break;
 	case Options.Add:
 		await addNewAnime(parseInt(arg1), config.list_location);
 		break;
 	case Options.Remove:
+		await removeAnime(parseInt(arg1), config.list_location);
+		break;
+	case Options.GetList:
+		// TODO: filter by completion type
+		console.log(getList(config.list_location));
 		break;
 	case Options.ModifyCompletion:
 		break;

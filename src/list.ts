@@ -1,8 +1,16 @@
 import { getNameById } from "./search";
 import { writeFileSync, readFileSync } from "fs";
 import { type EntryData, Completion } from "./types";
+import { exit } from "process";
 
 export async function addNewAnime(id: number, path: string) {
+	const list = getList(path);
+	const index = list.findIndex((entry) => entry.mal_id === id);
+	if (index !== -1) {
+		console.error("[Error] Entry already in list");
+		exit(1);
+	}
+
 	const name = await getNameById(id);
 	const newEntry: EntryData[] = [
 		{
@@ -13,7 +21,23 @@ export async function addNewAnime(id: number, path: string) {
 		},
 	];
 
-	writeFileSync(path, JSON.stringify(merge(getList(path), newEntry), null, 2));
+	// Maybe prompt for confirmation if the name is N/A?
+	console.log(`[Info] Added ${name} to list`);
+	writeFileSync(path, JSON.stringify(merge(list, newEntry), null, 2));
+}
+
+export async function removeAnime(id: number, path: string) {
+	const list = getList(path);
+	const index = list.findIndex((entry) => entry.mal_id === id);
+	if (index === -1) {
+		console.error("[Error] id not found in list");
+		exit(1);
+	}
+	list.splice(index, 1);
+
+	const name = await getNameById(id);
+	console.log(`[Info] Removed ${name} from list`);
+	writeFileSync(path, JSON.stringify(list, null, 2));
 }
 
 export function getList(path: string): EntryData[] {
