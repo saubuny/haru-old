@@ -12,10 +12,6 @@ import {
 import { Options, Completion } from "./types";
 import { readConfigFile } from "./config";
 
-// === TODO ===
-// * Modify data on list
-// * Pretty-printed colored output
-
 const cmdStr = Bun.argv[2];
 const arg1 = Bun.argv[3];
 const arg2 = Bun.argv[4];
