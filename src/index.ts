@@ -1,13 +1,16 @@
 import { search } from "./search";
 import { importFile } from "./parse";
 import { exit } from "process";
-import { addNewAnime, getList, removeAnime } from "./list";
-import { Options, Completion } from "./types";
+import { addNewAnime, getList, removeAnime, searchList } from "./list";
+import { Options } from "./types";
 import { readConfigFile } from "./config";
 
 // === TODO ===
 // * Modify data on list
 // * Query data on list
+//     * [x] Get by completion
+//     * [ ] Search by name
+//     * [ ] Search by id
 // * Pretty-printed colored output
 
 // Index errors apparently don't exist ??
@@ -24,7 +27,8 @@ switch (cmdStr) {
 		console.log("Haru: An Anime Tracker");
 		console.log("Usage:");
 		console.log("\t--help -> The message you're seeing right now");
-		console.log("\t--search [title] -> Search MAL by title");
+		console.log("\t--searchMal [title] -> Search MAL by title");
+		console.log("\t--searchList [title] -> Search list by title");
 		console.log("\t--add [id] -> Add ID to list");
 		console.log("\t--remove [id] -> Remove ID from list");
 		console.log(
@@ -37,11 +41,11 @@ switch (cmdStr) {
 			"\t--importKitsu [file] -> Import your Kitsu data in xml format",
 		);
 		console.log(
-			"\t--importHianime [file] -> Import your Hianime data in json format",
+			"\t--importHianime [file] -> Import your Hianime data in json format, separated by folders",
 		);
 		exit(0);
-	case "--search":
-	case "--s":
+	case "--searchMal":
+	case "--sm":
 		cmd = Options.SearchMal;
 		break;
 	case "--importMal":
@@ -67,6 +71,10 @@ switch (cmdStr) {
 	case "--getList":
 	case "--gl":
 		cmd = Options.GetList;
+		break;
+	case "--searchList":
+	case "--sl":
+		cmd = Options.SearchList;
 		break;
 	case "--modifyCompletion":
 	case "--modComp":
@@ -101,10 +109,17 @@ switch (cmd) {
 		const comp = Number(arg1);
 		if (comp < 0 || comp > 4 || isNaN(comp)) {
 			console.error("[Error] Completion number invalid or out of range");
-		} else {
-			const filteredList = list.filter((entry) => entry.completion === comp);
-			console.log(filteredList);
+			exit(1);
 		}
+		const filteredList = list.filter((entry) => entry.completion === comp);
+		console.log(filteredList);
+		break;
+	case Options.SearchList:
+		if (!arg1) {
+			console.error("[Error] No search term given");
+			exit(1);
+		}
+		searchList(arg1, config.list_location);
 		break;
 	case Options.ModifyCompletion:
 		break;

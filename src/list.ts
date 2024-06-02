@@ -3,6 +3,17 @@ import { writeFileSync, readFileSync } from "fs";
 import { type EntryData, Completion } from "./types";
 import { exit } from "process";
 
+// Very simple naive search algorithm
+export function searchList(name: string, path: string) {
+	for (let anime of getList(path)) {
+		if (anime.name.toLowerCase().includes(name.toLowerCase())) {
+			console.log(anime);
+			return;
+		}
+	}
+	console.error(`[Error] Match not found for search term ${name}`);
+}
+
 export async function addNewAnime(id: number, path: string) {
 	const list = getList(path);
 	const index = list.findIndex((entry) => entry.mal_id === id);
@@ -50,12 +61,15 @@ export function getList(path: string): EntryData[] {
 	}
 }
 
-function compareDates(anime1: EntryData, anime2: EntryData): boolean {
-	if (anime1.start_date === "0000-00-00" || anime2.start_date === "0000-00-00")
-		return anime1.completion < anime2.completion;
+function compareDates(oldAnime: EntryData, newAnime: EntryData): boolean {
+	if (
+		oldAnime.start_date === "0000-00-00" ||
+		newAnime.start_date === "0000-00-00"
+	)
+		return oldAnime.completion < newAnime.completion;
 
-	const d1 = new Date(anime1.start_date);
-	const d2 = new Date(anime2.start_date);
+	const d1 = new Date(oldAnime.start_date);
+	const d2 = new Date(newAnime.start_date);
 	return d1 > d2;
 }
 
