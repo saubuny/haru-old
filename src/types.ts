@@ -15,11 +15,11 @@ export enum Options {
 }
 
 export enum Completion {
-	Completed,
-	Watching,
-	Dropped,
 	PlanToWatch,
 	OnHold,
+	Dropped,
+	Watching,
+	Completed,
 }
 
 export interface EntryData {

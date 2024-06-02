@@ -181,3 +181,67 @@ test("merge by completion", () => {
 	];
 	expect(merge(oldData, newData)).toEqual(result);
 });
+
+test("merge identical", () => {
+	const oldData: EntryData[] = [
+		{
+			name: "Death Note",
+			mal_id: 1535,
+			start_date: "2020-02-05",
+			completion: 0,
+		},
+		{
+			name: "Gintama",
+			mal_id: 918,
+			start_date: "2021-10-29",
+			completion: 0,
+		},
+		{
+			name: "Tokyo Mew Mew",
+			mal_id: 687,
+			start_date: "2020-11-09",
+			completion: 1,
+		},
+	];
+	const newData: EntryData[] = [
+		{
+			name: "Death Note",
+			mal_id: 1535,
+			start_date: "2020-02-05",
+			completion: 0,
+		},
+		{
+			name: "Gintama",
+			mal_id: 918,
+			start_date: "2021-10-29",
+			completion: 0,
+		},
+		{
+			name: "Tokyo Mew Mew",
+			mal_id: 687,
+			start_date: "2020-11-09",
+			completion: 1,
+		},
+	];
+	const result: EntryData[] = [
+		{
+			name: "Tokyo Mew Mew",
+			mal_id: 687,
+			start_date: "2020-11-09",
+			completion: 1,
+		},
+		{
+			name: "Gintama",
+			mal_id: 918,
+			start_date: "2021-10-29",
+			completion: 0,
+		},
+		{
+			name: "Death Note",
+			mal_id: 1535,
+			start_date: "2020-02-05",
+			completion: 0,
+		},
+	];
+	expect(merge(oldData, newData)).toEqual(result);
+});

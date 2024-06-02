@@ -66,11 +66,11 @@ function compareDates(oldAnime: EntryData, newAnime: EntryData): boolean {
 		oldAnime.start_date === "0000-00-00" ||
 		newAnime.start_date === "0000-00-00"
 	)
-		return oldAnime.completion <= newAnime.completion;
+		return oldAnime.completion < newAnime.completion;
 
 	const d1 = new Date(oldAnime.start_date);
 	const d2 = new Date(newAnime.start_date);
-	return d1 >= d2;
+	return d1 > d2;
 }
 
 export function merge(
@@ -78,19 +78,20 @@ export function merge(
 	newEntries: EntryData[],
 ): EntryData[] {
 	let combinedEntries: EntryData[] = oldEntries.concat(newEntries);
+	let resultMap: Map<number, EntryData> = new Map();
 
-	for (let i = 0; i < combinedEntries.length; i++) {
-		for (let j = 0; j < combinedEntries.length; j++) {
-			if (
-				combinedEntries[i].mal_id === combinedEntries[j].mal_id &&
-				compareDates(combinedEntries[i], combinedEntries[j])
-			) {
-				combinedEntries.splice(j, 1);
+	combinedEntries.forEach((entry) => {
+		if (resultMap.has(entry.mal_id)) {
+			if (!compareDates(resultMap.get(entry.mal_id)!, entry)) {
+				resultMap.set(entry.mal_id, entry);
 			}
+		} else {
+			resultMap.set(entry.mal_id, entry);
 		}
-	}
+	});
 
-	return combinedEntries.toSorted((a, b) => a.mal_id - b.mal_id);
+	const result = Array.from(resultMap.values());
+	return result.toSorted((a, b) => a.mal_id - b.mal_id);
 }
 
 export function modifyCompletion(

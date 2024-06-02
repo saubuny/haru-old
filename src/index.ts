@@ -20,6 +20,8 @@ let cmd: Options;
 
 const config = readConfigFile()!;
 
+// The merge function is currently somehow broken, deleting a lot of random stuff
+
 switch (cmdStr) {
 	case "--help":
 	case "--h":
