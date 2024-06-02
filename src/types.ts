@@ -9,6 +9,7 @@ export enum Options {
 	ImportMal,
 	ImportKitsu,
 	ImportHianime,
+	Completion,
 }
 
 export enum Completion {

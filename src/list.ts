@@ -92,3 +92,19 @@ export function merge(
 
 	return combinedEntries.toSorted((a, b) => a.mal_id - b.mal_id);
 }
+
+export function modifyCompletion(
+	id: number,
+	completion: Completion,
+	path: string,
+) {
+	const list = getList(path);
+	const index = list.findIndex((entry) => entry.mal_id === id);
+	if (index === -1) {
+		console.error("[Error] id not found in list");
+		exit(1);
+	}
+
+	list[index].completion = completion;
+	writeFileSync(path, JSON.stringify(list, null, 2));
+}

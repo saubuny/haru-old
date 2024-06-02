@@ -1,22 +1,24 @@
 import { search } from "./search";
 import { importFile } from "./parse";
 import { exit } from "process";
-import { addNewAnime, getList, removeAnime, searchList } from "./list";
-import { Options } from "./types";
+import {
+	addNewAnime,
+	getList,
+	modifyCompletion,
+	removeAnime,
+	searchList,
+} from "./list";
+import { Options, Completion } from "./types";
 import { readConfigFile } from "./config";
 
 // === TODO ===
 // * Modify data on list
-// * Query data on list
-//     * [x] Get by completion
-//     * [ ] Search by name
-//     * [ ] Search by id
 // * Pretty-printed colored output
 
 // Index errors apparently don't exist ??
 const cmdStr = Bun.argv[2];
 const arg1 = Bun.argv[3];
-// const arg2 = Bun.argv[4];
+const arg2 = Bun.argv[4];
 let cmd: Options;
 
 const config = readConfigFile()!;
@@ -27,6 +29,7 @@ switch (cmdStr) {
 		console.log("Haru: An Anime Tracker");
 		console.log("Usage:");
 		console.log("\t--help -> The message you're seeing right now");
+		console.log("\t--completion -> Get the meanings of completion numbers");
 		console.log("\t--searchMal [title] -> Search MAL by title");
 		console.log("\t--searchList [title] -> Search list by title");
 		console.log("\t--add [id] -> Add ID to list");
@@ -77,12 +80,16 @@ switch (cmdStr) {
 		cmd = Options.SearchList;
 		break;
 	case "--modifyCompletion":
-	case "--modComp":
+	case "--mc":
 		cmd = Options.ModifyCompletion;
 		break;
 	case "--modifyStart":
-	case "--modStart":
+	case "--ms":
 		cmd = Options.ModifyStart;
+		break;
+	case "--completion":
+	case "--c":
+		cmd = Options.Completion;
 		break;
 	default:
 		console.error(`[Error] Invalid command given: ${cmdStr}`);
@@ -100,7 +107,7 @@ switch (cmd) {
 	case Options.Remove:
 		await removeAnime(parseInt(arg1), config.list_location);
 		break;
-	case Options.GetList:
+	case Options.GetList: {
 		const list = getList(config.list_location);
 		if (!arg1) {
 			console.log(list);
@@ -114,6 +121,7 @@ switch (cmd) {
 		const filteredList = list.filter((entry) => entry.completion === comp);
 		console.log(filteredList);
 		break;
+	}
 	case Options.SearchList:
 		if (!arg1) {
 			console.error("[Error] No search term given");
@@ -121,9 +129,27 @@ switch (cmd) {
 		}
 		searchList(arg1, config.list_location);
 		break;
-	case Options.ModifyCompletion:
+	case Options.ModifyCompletion: {
+		const id = Number(arg1);
+		const comp = Number(arg2);
+		if (comp < 0 || comp > 4 || isNaN(comp)) {
+			console.error("[Error] Completion number invalid or out of range");
+			exit(1);
+		}
+		if (isNaN(id)) {
+			console.error("[Error] Invalid id");
+			exit(1);
+		}
+		modifyCompletion(id, comp, config.list_location);
 		break;
+	}
 	case Options.ModifyStart:
+		break;
+	case Options.Completion:
+		const keys = Object.keys(Completion).filter((v) => isNaN(Number(v)));
+		for (let i = 0; i < keys.length; i++) {
+			console.log(`${i}: ${keys[i]}`);
+		}
 		break;
 	case Options.ImportMal:
 	case Options.ImportKitsu:
